@@ -16,27 +16,27 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/task")
 public class TaskController {
-    
+
     @Autowired
     private iTaskRepository taskRepository;
 
     @PostMapping("/")
-    public ResponseEntity creater(@RequestBody TaskModel taskModel, HttpServletRequest request){
-        
+    public ResponseEntity creater(@RequestBody TaskModel taskModel, HttpServletRequest request) {
+
         var idUser = request.getAttribute("idUser");
 
         taskModel.setIdUser((UUID) idUser);
-        
+
         var currentDate = LocalDateTime.now();
-        
-        if(currentDate.isAfter(taskModel.getStartAt())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de inicio deve ser menor que a data atual");
+
+        if (currentDate.isAfter(taskModel.getStartAt())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("A data de inicio deve ser maior que a data atual");
 
         }
 
-
         var task = this.taskRepository.save(taskModel);
-    
+
         return ResponseEntity.status(HttpStatus.OK).body(task);
     }
 
